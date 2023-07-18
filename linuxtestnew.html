@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test System</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 36px;
+    }
+
+    h2 {
+      margin: 10px 0;
+      font-size: 24px;
+    }
+
+    p {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .terminal-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 20px;
+    }
+
+    #ex {
+      width: 300px;
+      height: 30px;
+      font-size: 18px;
+    }
+
+    #exerciseDescription {
+      border: 1px solid #fff;
+      padding: 10px;
+      background-color: #000;
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    #codeInput {
+      width: 100%;
+      resize: vertical;
+      box-sizing: border-box;
+      height: 150px;
+      font-size: 16px;
+    }
+
+    #submitBtn {
+      margin-top: 10px;
+      font-size: 18px;
+      padding: 10px 20px;
+      background-color: #00ff00;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #submitBtn:hover {
+      background-color: #00cc00;
+    }
+
+    #responseField {
+      border: 1px solid #fff;
+      padding: 10px;
+      background-color: #000;
+      margin-top: 10px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 30px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      .terminal-link {
+        font-size: 16px;
+      }
+
+      #ex {
+        font-size: 16px;
+      }
+
+      #exerciseDescription,
+      #codeInput,
+      #responseField {
+        font-size: 16px;
+      }
+
+      #codeInput {
+        height: 100px;
+      }
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+   function getEx(){
+      const selectElement = document.getElementById('ex');
+
+// Make an asynchronous request to fetch the options from the API
+   fetch('http://www.uktc-edu.eu:5000/tasks')
+  .then(response => response.json())
+  .then(data => {
+    // Iterate over the options and create <option> elements
+    data.forEach(task => {
+      const optionElement = document.createElement('option');
+      optionElement.value = task.id;
+      optionElement.textContent = task.heading;
+
+      // Append the option to the select element
+      selectElement.appendChild(optionElement);
+    });
+  });
+   }
+
+   function changeEx(){
+     var eid = document.getElementById("ex").value;
+     document.getElementById("codeInput").value = "";
+     document.getElementById("responseField").innerHTML = "";
+     console.log(eid);
+     localStorage.setItem("eid", eid);
+      $.get('http://www.uktc-edu.eu:5000/task/' + eid, function(response) {
+        $('#exerciseDescription').text(response['task']);
+        $('#exerciseHeading').text(response['heading']);
+                    console.log(response)
+      });
+
+   }
+  </script>
+</head>
+<body onload="getEx()" bgcolor="#aaa">
+  <h1>Тестова система за Linux команди</h1>
+  <a href="http://www.uktc-edu.eu/testsys/linuxos.html" target="_blank"><h2>Виртуален Linux терминал</h2></a>
+  <p>Избери задача: </p>
+  <select id="ex" onchange="changeEx()"></select>
+  </br>
+  <h2>Условие на задачата:</h2>
+  <h3 id="exerciseHeading"></h3>
+  <div id="exerciseDescription"></div>
+  <h2>Решение</h2>
+  <textarea id="codeInput" rows="5" cols="50" placeholder="Enter your code"></textarea>
+  <br>
+  <button id="submitBtn">Предай за тестване</button>
+
+  <h2>Резултат</h2>
+  <div id="responseField"></div>
+  </br> 
+  </hr style="border:#fff;">
+  <p>инж. Венцислав Начев, НПГ по КТС - гр. Правец</p>
+  <script>
+    localStorage.setItem("eid", 1);
+    $(document).ready(function() {
+      // Load exercise description
+      $.get('http://www.uktc-edu.eu:5000/task/' + localStorage.getItem("eid"), function(response) {
+        $('#exerciseDescription').text(response['task']);
+        $('#exerciseHeading').text(response['heading']);
+                    console.log(response)
+      });
+
+      // Submit button click event handler
+      $('#submitBtn').click(function() {
+        var code = $('#codeInput').val();
+        document.getElementById("responseField").innerHTML = "";
+        $.ajax({
+          url: 'http://www.uktc-edu.eu:5000/test/' + localStorage.getItem("eid"),
+          type: 'POST',
+          data: JSON.stringify({ code: code }),
+          contentType: 'application/json',
+          success: function(response) {
+            $('#responseField').text(response[1]);
+            console.log(response);
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

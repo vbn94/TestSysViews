@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remote Robots & Arduino Programming</title>
+    <link rel="stylesheet" href="./styles/arduinostyle.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+
+    <!-- Your JavaScript code here -->
+    <script>
+        function onMqttLibraryLoaded() {
+            const mqttBrokerUrl = 'ws://164.138.216.127:1883'; // Replace with your MQTT broker URL using the "ws" protocol and appropriate port
+            const mqttClientId = 'mqtt_' + Math.random().toString(16).substr(2, 8); // Generate a random client ID
+ 
+            // Create a MQTT client instance
+            const mqttClient = new Paho.MQTT.Client(mqttBrokerUrl, mqttClientId);
+ 
+            // Callback function when the MQTT client is connected
+            mqttClient.onConnectionLost = onConnectionLost;
+            mqttClient.onMessageArrived = onMessageArrived;
+ 
+            // Connect to the MQTT broker
+            mqttClient.connect({
+                onSuccess: onConnect,
+                onFailure: onFailure,
+                useSSL: false // Change to "true" if you are using "wss" protocol
+            });
+ 
+            // Callback function when the MQTT client is successfully connected
+            function onConnect() {
+                console.log('Connected to MQTT broker');
+ 
+                // Subscribe to the "serial/1" topic
+                mqttClient.subscribe('serial/1', {
+                    onSuccess: onSubscribeSuccess,
+                    onFailure: onSubscribeFailure
+                });
+            }
+ 
+            // Callback function when the MQTT client fails to connect
+            function onFailure(err) {
+                console.error('Failed to connect to MQTT broker:', err);
+            }
+ 
+            // Callback function when the MQTT client loses connection
+            function onConnectionLost(responseObject) {
+                if (responseObject.errorCode !== 0) {
+                    console.error('Connection lost:', responseObject.errorMessage);
+                }
+            }
+ 
+            // Callback function when a message is received
+            function onMessageArrived(message) {
+                // Convert the message payload to a string
+                const receivedMessage = message.payloadString;
+ 
+                // Display the received message in the browser
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML += '<p>' + receivedMessage + '</p>';
+            }
+ 
+            // Callback function when successfully subscribed to the topic
+            function onSubscribeSuccess() {
+                console.log('Subscribed to "serial/1" topic');
+            }
+ 
+            // Callback function when failed to subscribe to the topic
+            function onSubscribeFailure(err) {
+                console.error('Failed to subscribe to topic:', err);
+            }
+        }
+    </script>
+</head>
+<body  onload="onMqttLibraryLoaded()">
+    <h1>Arduino Programming</h1>
+    <form id="codeForm">
+        <label for="code">Enter your Arduino code:</label>
+        <br>
+        <textarea id="code" rows="20" cols="120">const int time = 100;
+const int led = 13;
+void setup(){
+    pinMode(led, OUTPUT);
+}
+            
+void loop(){
+ digitalWrite(led, HIGH);
+ delay(time);
+ digitalWrite(led, LOW);
+ delay(time);
+}</textarea>
+        <br>
+        <button type="submit">Submit Code</button>
+    </form>
+    <div id="response"></div>
+
+    <script src="./scripts/arduinoscript.js">
+    </script>
+ <h1>Serial Communication</h1>
+ <input type="text" id="message_input">
+ <button onclick="">Send</button>
+ <div id="messages"></div>
+   <!-- Paho MQTT JavaScript library -->
+  
+</body>
+</html>

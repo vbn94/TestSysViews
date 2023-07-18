@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test System PHP</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="./styles/phpstyle.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body onload="getEx()" bgcolor="#aaa">
+  <h1>Тестова система за PHP програми</h1>
+  <p>Избери задача: </p>
+  <select id="ex" onchange="changeEx()"></select>
+  </br>
+  <h2>Условие на задачата:</h2>
+  <h3 id="exerciseHeading"></h3>
+  <div id="exerciseDescription"></div>
+  <h2>Решение</h2>
+  <textarea id="codeInput" rows="5" cols="50" placeholder="Enter your code"></textarea>
+  <br>
+  <button id="submitBtn">Предай за тестване</button>
+
+  <h2>Резултат</h2>
+  <div id="responseField"></div>
+  </br> 
+  </hr style="border:#fff;">
+  <p>инж. Венцислав Начев, НПГ по КТС - гр. Правец</p>
+  <script src="./scripts/phptest.js">
+  </script>
+</body>
+</html>
+

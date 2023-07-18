@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remote Robots & Arduino Programming</title>
+    <link rel="stylesheet" href="./styles/arduinostyle.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+
+</head>
+<body>
+    <h1>Arduino Programming</h1>
+    <form id="codeForm">
+        <label for="code">Enter your Arduino code:</label>
+        <br>
+        <textarea id="code" rows="20" cols="120">const int time = 100;
+const int led = 13;
+void setup(){
+    pinMode(led, OUTPUT);
+}
+            
+void loop(){
+ digitalWrite(led, HIGH);
+ delay(time);
+ digitalWrite(led, LOW);
+ delay(time);
+}</textarea>
+        <br>
+        <button type="submit">Submit Code</button>
+    </form>
+    <div id="response"></div>
+
+    <script src="./scripts/arduinoscript.js">
+    </script>
+</body>
+</html>
